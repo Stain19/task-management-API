@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Task, TaskStatus } from './task.model';
 import { v4 as uuid } from 'uuid';
 import { CreateTaskDTO } from 'src/dto/create-task.dto';
@@ -31,9 +36,13 @@ export class TasksService {
   }
 
   getTaskById(id: string): Task {
-    return this.tasks.find(
+    const found_task = this.tasks.find(
       (task) => task.id === id && task.status !== TaskStatus.DELETED,
     );
+    if (!found_task) {
+      throw new NotFoundException(`Task with id ${id} not found`);
+    }
+    return found_task;
   }
 
   createTask(createTaskDTO: CreateTaskDTO): Task {
@@ -51,20 +60,14 @@ export class TasksService {
   }
 
   deleteTaskById(id: string): void {
-    const task = this.tasks.find((task) => task.id === id);
-    if (task === null) {
+    const found_task: Task = this.getTaskById(id);
+    if (found_task.status === TaskStatus.DELETED) {
       throw new HttpException(
-        `Cannot find task with id ${task.id}`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    if (task.status === TaskStatus.DELETED) {
-      throw new HttpException(
-        `The task with id ${task.id} it seems already deleted.`,
+        `The task with id ${id} it seems already deleted.`,
         HttpStatus.FORBIDDEN,
       );
     }
-    task.status = TaskStatus.DELETED;
+    found_task.status = TaskStatus.DELETED;
   }
 
   updateTaskStatus(id: string, status: TaskStatus): Task {
