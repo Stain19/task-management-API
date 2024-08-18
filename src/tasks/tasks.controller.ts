@@ -9,10 +9,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Task, TaskStatus } from './task.model';
+import { TaskStatus } from 'src/tasks/task-status.enum';
 import { CreateTaskDTO } from 'src/dto/create-task.dto';
 import { GetTasksFilterDTO } from 'src/dto/get-tasks-filter.dto';
 import { UpdateTaskStatusDTO } from 'src/dto/update-task-status.dto';
+import { Task } from './task.entity';
 
 @Controller('tasks')
 export class TasksController {
