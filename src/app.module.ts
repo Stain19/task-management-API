@@ -13,7 +13,7 @@ import { TasksRepository } from './tasks/tasks.repository';
       port: 5432,
       username: 'postgres',
       password: 'postgres',
-      database: 'task_manager_db',
+      database: 'nestjs_task_db',
       autoLoadEntities: true,
       synchronize: true,
     }),
